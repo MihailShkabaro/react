@@ -1,0 +1,18 @@
+.Item {
+    color: brown;
+    display: inline-block;
+    padding: 10px 20px;
+    margin: 5px;
+    border: 2px solid #333;
+    border-radius: 5px;
+    background-color: #fff;
+    color: #333;
+    font-size: 16px;
+    cursor: pointer;
+}
+.option:hover{
+    color: brown; 
+}
+.option:active, .option:focus{
+    color: green;
+}
