@@ -1,85 +1,114 @@
-import React, { useState } from 'react';
-import './Item.css';
+import React, { useState } from "react";
+import "./Item.css";
 
 const Item = () => {
-  const riddles = [
-    {
-      id: 1,
-      description: "What has keys but can't open locks?",
-      option1: "Piano",
-      option2: "Book",
-      option3: "Computer",
-      option4: "Door",
-      correct: 2
-    },
-    {
-      id: 2,
-      description: "I speak without a mouth and hear without ears. I have no body, but I come alive with the wind. What am I?",
-      option1: "Tree",
-      option2: "Echo",
-      option3: "River",
-      option4: "Ghost",
-      correct: 2
-    },
-    {
-      id: 3,
-      description: "What can you see with your eyes closed?",
-      option1: "People",
-      option2: "Sun",
-      option3: "Dreams",
-      option4: "Stone",
-      correct: 3
-    },
-    {
-      id: 4,
-      description: "What can be broken even if you don't touch it?",
-      option1: "Law",
-      option2: "Air",
-      option3: "Face",
-      option4: "Heart",
-      correct: 4
-    },
-    {
-      id: 5,
-      description: "What can you see but not touch?",
-      option1: "Light",
-      option2: "Music",
-      option3: "Dream",
-      option4: "Idea",
-      correct: 1
-    }
-  ];
-
+  const [riddles, setRiddles] = useState([]);
   const [currentRiddleIndex, setCurrentRiddleIndex] = useState(0);
   const [score, setScore] = useState(0);
   const [selectedOption, setSelectedOption] = useState(null);
 
-  const handleOptionSelect = (option) => {
-    setSelectedOption(option);
+  const handleAddRiddle = (event) => {
+    event.preventDefault();
+    const riddle = {
+      description: event.target.querySelector(
+        'input[name="riddle-description"]'
+      ).value,
+      option1: event.target.querySelector('input[name="option1"]').value,
+      option2: event.target.querySelector('input[name="option2"]').value,
+      option3: event.target.querySelector('input[name="option3"]').value,
+      option4: event.target.querySelector('input[name="option4"]').value,
+      correct: Number(event.target.querySelector('input[name="correct"]').value),
+    };
+    setRiddles([...riddles, riddle]);
+    event.target.reset();
+  };
+
+  const handleOptionSelect = (event) => {
+    setSelectedOption(Number(event.target.value));
+  };
+
+  const handleNextRiddle = (event) => {
+    event.preventDefault();
     const currentRiddle = riddles[currentRiddleIndex];
-    if (option === currentRiddle.correct) {
+    if (selectedOption === currentRiddle.correct) {
       setScore(score + 1);
     }
-  }
-
-  const handleNextRiddle = () => {
     setCurrentRiddleIndex(currentRiddleIndex + 1);
     setSelectedOption(null);
-  }
+  };
 
   return (
     <div className="Item">
+      <div className="add-riddle">
+        <h2>Add a new riddle</h2>
+        <form onSubmit={handleAddRiddle}>
+          <label htmlFor="riddle-description">Riddle:</label>
+          <input type="text" name="riddle-description" required />
+          <br />
+          <label htmlFor="option1">Option 1:</label>
+          <input type="text" name="option1" required />
+          <br />
+          <label htmlFor="option2">Option 2:</label>
+          <input type="text" name="option2" required />
+          <br />
+          <label htmlFor="option3">Option 3:</label>
+          <input type="text" name="option3" required />
+          <br />
+          <label htmlFor="option4">Option 4:</label>
+          <input type="text" name="option4" required />
+          <br />
+          <label htmlFor="correct">Correct answer (1-4):</label>
+          <input type="number" name="correct" min="1" max="4" required />
+          <br />
+          <button type="submit">Add</button>
+        </form>
+      </div>
+      <hr />
       {currentRiddleIndex < riddles.length ? (
-        <div className="riddles">
-          <h3>{riddles[currentRiddleIndex].description}</h3>
-          <div className="options">
-            <div className={`option ${selectedOption === 1 ? 'selected' : ''}`} onClick={() => handleOptionSelect(1)}>{riddles[currentRiddleIndex].option1}</div>
-            <div className={`option ${selectedOption === 2 ? 'selected' : ''}`} onClick={() => handleOptionSelect(2)}>{riddles[currentRiddleIndex].option2}</div>
-            <div className={`option ${selectedOption === 3 ? 'selected' : ''}`} onClick={() => handleOptionSelect(3)}>{riddles[currentRiddleIndex].option3}</div>
-            <div className={`option ${selectedOption === 4 ? 'selected' : ''}`} onClick={() => handleOptionSelect(4)}>{riddles[currentRiddleIndex].option4}</div>
+        <form onSubmit={handleNextRiddle}>
+          <div className="riddles">
+            <h3>{riddles[currentRiddleIndex].description}</h3>
+            <div className="options">
+              <label>
+                <input
+                  type="radio"
+                  value={1}
+                  checked={selectedOption === 1}
+                  onChange={handleOptionSelect}
+                />
+                {riddles[currentRiddleIndex].option1}
+              </label>
+              <label>
+                <input
+                  type="radio"
+                  value={2}
+                  checked={selectedOption === 2}
+                  onChange={handleOptionSelect}
+                />
+                {riddles[currentRiddleIndex].option2}
+              </label>
+              <label>
+                <input
+                  type="radio"
+                  value={3}
+                  checked={selectedOption === 3}
+                  onChange={handleOptionSelect}
+                />
+                {riddles[currentRiddleIndex].option3}
+              </label>
+              <label>
+                <input
+                  type="radio"
+                  value={4}
+                  checked={selectedOption === 4}
+                  onChange={handleOptionSelect}
+                />
+                {riddles[currentRiddleIndex].option4}
+              </label>
+            </div>
+            <button type="submit" disabled={selectedOption === null}>Next</button>
           </div>
-          <button onClick={handleNextRiddle} disabled={selectedOption === null}>Next</button>
-        </div>
+        </form>
       ) : (
         <div className="result">
           <h2>You have answered all the riddles!</h2>
@@ -88,6 +117,6 @@ const Item = () => {
       )}
     </div>
   );
-}
+};
 
 export default Item;
