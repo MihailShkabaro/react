@@ -1,51 +1,36 @@
-import React, { useState } from 'react';
-import './Item.css';
+import React, { useState } from "react";
+import "./Item.css";
 
 const Item = () => {
   const riddles = [
     {
       id: 1,
       description: "What has keys but can't open locks?",
-      option1: "Piano",
-      option2: "Book",
-      option3: "Computer",
-      option4: "Door",
+      options: ["Piano", "Book", "Computer", "Door"],
       correct: 2
     },
     {
       id: 2,
       description: "I speak without a mouth and hear without ears. I have no body, but I come alive with the wind. What am I?",
-      option1: "Tree",
-      option2: "Echo",
-      option3: "River",
-      option4: "Ghost",
+      options: ["Tree", "Echo", "River", "Ghost"],
       correct: 2
     },
     {
       id: 3,
       description: "What can you see with your eyes closed?",
-      option1: "People",
-      option2: "Sun",
-      option3: "Dreams",
-      option4: "Stone",
+      options: ["People", "Sun", "Dreams", "Stone"],
       correct: 3
     },
     {
       id: 4,
       description: "What can be broken even if you don't touch it?",
-      option1: "Law",
-      option2: "Air",
-      option3: "Face",
-      option4: "Heart",
+      options: ["Law", "Air", "Face", "Heart"],
       correct: 4
     },
     {
       id: 5,
       description: "What can you see but not touch?",
-      option1: "Light",
-      option2: "Music",
-      option3: "Dream",
-      option4: "Idea",
+      options: ["Light", "Music", "Dream", "Idea"],
       correct: 1
     }
   ];
@@ -54,32 +39,57 @@ const Item = () => {
   const [score, setScore] = useState(0);
   const [selectedOption, setSelectedOption] = useState(null);
 
-  const handleOptionSelect = (option) => {
-    setSelectedOption(option);
+  const handleOptionSelect = (event) => {
+    if (!selectedOption) {
+      const optionIndex = Number(event.target.value);
+      setSelectedOption(optionIndex);
+    }
+  };
+
+  const handleNextRiddle = (event) => {
+    event.preventDefault();
+
+    if (!selectedOption) {
+      alert("Please select an option before continuing.");
+      return;
+    }
+
     const currentRiddle = riddles[currentRiddleIndex];
-    if (option === currentRiddle.correct) {
+    if (selectedOption === currentRiddle.correct) {
       setScore(score + 1);
     }
-  }
 
-  const handleNextRiddle = () => {
-    setCurrentRiddleIndex(currentRiddleIndex + 1);
+    if (currentRiddleIndex < riddles.length - 1) {
+      setCurrentRiddleIndex(currentRiddleIndex + 1);
+    } else {
+      alert("You have answered all the riddles!");
+    }
+
     setSelectedOption(null);
-  }
+  };
 
   return (
     <div className="Item">
       {currentRiddleIndex < riddles.length ? (
-        <div className="riddles">
-          <h3>{riddles[currentRiddleIndex].description}</h3>
-          <div className="options">
-            <div className={`option ${selectedOption === 1 ? 'selected' : ''}`} onClick={() => handleOptionSelect(1)}>{riddles[currentRiddleIndex].option1}</div>
-            <div className={`option ${selectedOption === 2 ? 'selected' : ''}`} onClick={() => handleOptionSelect(2)}>{riddles[currentRiddleIndex].option2}</div>
-            <div className={`option ${selectedOption === 3 ? 'selected' : ''}`} onClick={() => handleOptionSelect(3)}>{riddles[currentRiddleIndex].option3}</div>
-            <div className={`option ${selectedOption === 4 ? 'selected' : ''}`} onClick={() => handleOptionSelect(4)}>{riddles[currentRiddleIndex].option4}</div>
+        <form onSubmit={handleNextRiddle}>
+          <div className="riddles">
+            <h3>{riddles[currentRiddleIndex].description}</h3>
+            <div className="options">
+              {riddles[currentRiddleIndex].options.map((option, index) => (
+                <label key={index}>
+                  <input
+                    type="radio"
+                    value={index + 1}
+                    checked={selectedOption === index + 1}
+                    onChange={handleOptionSelect}
+                  />
+                  {option}
+                </label>
+              ))}
+            </div>
+            <button type="submit" disabled={!selectedOption}>Next</button>
           </div>
-          <button onClick={handleNextRiddle} disabled={selectedOption === null}>Next</button>
-        </div>
+        </form>
       ) : (
         <div className="result">
           <h2>You have answered all the riddles!</h2>
@@ -88,6 +98,6 @@ const Item = () => {
       )}
     </div>
   );
-}
+};
 
 export default Item;
